@@ -283,8 +283,9 @@ def C_table(sex, P=None):
         with open(_CF, 'w') as fh: json.dump(_CACHE, fh)
     return _CACHE[key]
 
+C_SMOOTH = 'iso'      # 'iso' = spec §4 (isotonic non-increasing); 'raw' = unsmoothed MC root (diagnostics)
 def Cconst(sex, a, P=None):
-    a = min(max(a, 18), 100); return C_table(sex, P)['iso'][a - 18]
+    a = min(max(a, 18), 100); return C_table(sex, P)[C_SMOOTH][a - 18]
 
 # ------------------------------------------------------------------------------------------------
 # Core evaluations
