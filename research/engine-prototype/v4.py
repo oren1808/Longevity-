@@ -169,7 +169,7 @@ def w_o(x, P): return _lin(x, *P['wo'])
 def rho(Q, P):
     i = sum(Q >= br for br in P['rho_breaks']); return P['rho_vals'][i]
 
-def smk_path(state, a, b, P, quit_now=False):
+def smk_path(state, a, b, P, quit_now=False, quit_age=None):
     """HR_smk(x) for x = a..109 (before attenuation)."""
     x = np.arange(a, MAXAGE)
     kind, lvl = state
@@ -177,7 +177,10 @@ def smk_path(state, a, b, P, quit_now=False):
         assert kind == 'cur'
         t0, Q, ref = 0.0, float(a), F['smk'][lvl][b]          # §3.1 quit action: HR_ref = HR_current
     elif kind == 'quit':
-        t0 = QUIT[lvl]; Q = a - t0; ref = P['hr_ref'] if b == 0 else P['hr_ref'] * F['smk']['10-19'][b] / F['smk']['10-19'][0]
+        t0 = QUIT[lvl]; Q = a - t0
+        if quit_age is not None:            # PROPOSED (not in spec): stored age at quitting -> t0 advances with age, Q fixed
+            Q = float(quit_age); t0 = max(a - Q, 0.0)
+        ref = P['hr_ref'] if b == 0 else P['hr_ref'] * F['smk']['10-19'][b] / F['smk']['10-19'][0]
     else:
         return np.full(len(x), F['smk'][lvl][b])
     t = t0 + (x - a)
@@ -188,7 +191,7 @@ def H_path(ans, a, sex, b=0, quit_now=False, P=None):
     P = P or PARAMS
     x = np.arange(a, MAXAGE)
     ws, wo = w_s(x, P), w_o(x, P)
-    hs = 1 + (smk_path(smoking_level(ans), a, b, P, quit_now) - 1) * ws
+    hs = 1 + (smk_path(smoking_level(ans), a, b, P, quit_now, ans.get('quit_age')) - 1) * ws
     ha = 1 + (hr('alc', ans['alc'], b, sex, a) - 1) * wo
     S = P['k'] * cluster_lnsum(ans, b, sex, a)
     hc = 1 + (math.exp(P['L'] * math.tanh(S / P['L'])) - 1) * wo
@@ -446,5 +449,5 @@ def what_if(ans, level, age, sex, gate='no', hide_number=False, P=None):
 # Calibrated parameters (see README 'v4 calibration log'). Kept separate so PARAMS_SPEC stays the
 # literal docs/engine.md values.
 # ------------------------------------------------------------------------------------------------
-PARAMS_CAL = dict(PARAMS_SPEC)
+PARAMS_CAL = dict(PARAMS_SPEC, k=0.80, rho_vals=(0.0, 0.025, 0.1, 0.25), wo=(55, 90, 0.5))
 PARAMS.update(PARAMS_CAL)

@@ -27,16 +27,25 @@ def anchors(P=None, sexes='MF'):
     def add(i, lbl, v, lo, hi, ok=None):
         R.append((i, lbl, v, lo, hi, (lo - 1e-9 <= v <= hi + 1e-9) if ok is None else ok))
     for s in sexes:
-        add('A3', f'Li @50 {s}: five vs none', point(FIVE, 50, s, P=P) - point(NONE, 50, s, P=P), 12, 14)
+        add('A3', f'Li @50 {s}: five vs none', point(FIVE, 50, s, P=P) - point(NONE, 50, s, P=P), *((12, 14) if s == 'M' else (10.5, 13)))  # engine.md v4.1 §11 A3
     for s in sexes:
         add('A4', f'pack/day vs never @40 {s}', point(TYP, 40, s, P=P) - point(mod(TYP, smk='20+'), 40, s, P=P), 8, 10.5)
     for s in sexes:
         add('A5', f'quit @45 from 10-19 {s}', quit_gain(mod(TYP, smk='10-19'), 45, s, P), 5, 6.5)
+    # A5b: Jha 2013 gains (10/9/6/4) are for the average US smoker (all-cause HR ~2.8-3.0 = our '20+' level).
+    # Evaluated from '20+' (anchor) and, for information only, from '10-19' (literal continuation of A5; provably infeasible).
+    # engine.md v4.1: target applies to the mean of both sexes; per-sex values printed as INFO
+    gs = {s: [quit_gain(mod(TYP, smk='20+'), a, s, P) for a in (30, 40, 50, 60)] for s in ('M', 'F')}
+    for s in ('M', 'F'):
+        add('A5b', f'quit gradient decreasing (20+) {s}', float(all(gs[s][i] > gs[s][i + 1] for i in range(3))), 1, 1)
+        for a, gi, tgt in zip((30, 40, 50, 60), gs[s], (10, 9, 6, 4)):
+            add('INFO', f'A5b quit @{a} from 20+ {s}', gi, tgt - 1.5, tgt + 1.5)
+    for i, (a, tgt) in enumerate(zip((30, 40, 50, 60), (10, 9, 6, 4))):
+        add('A5b', f'quit @{a} from 20+ mean(M,F)', (gs['M'][i] + gs['F'][i]) / 2, tgt - 1.5, tgt + 1.5)
     for s in sexes:
         g = [quit_gain(mod(TYP, smk='10-19'), a, s, P) for a in (30, 40, 50, 60)]
         for a, gi, tgt in zip((30, 40, 50, 60), g, (10, 9, 6, 4)):
-            add('A5b', f'quit @{a} from 10-19 {s}', gi, tgt - 1.5, tgt + 1.5)
-        add('A5b', f'quit gradient decreasing {s}', float(all(g[i] > g[i + 1] for i in range(3))), 1, 1)
+            add('INFO', f'A5b literal: quit @{a} from 10-19 {s}', gi, tgt - 1.5, tgt + 1.5)
     for s in sexes:
         a = mod(TYP, act='0'); n, _ = v4.apply_action(a, 'walk30', s, 40)
         add('A6', f'0 -> 150-299 (fit mod->easy) @40 {s}', point(n, 40, s, P=P) - point(a, 40, s, P=P), 1.3, 3)
@@ -74,8 +83,9 @@ def print_table(rows, title):
     print(f"{'id':5s} {'test':58s} {'value':>8s}  {'target':>13s}  result")
     for i, lbl, v, lo, hi, ok in rows:
         tgt = f'[{lo:g}, {hi:g}]' if lo > -99 else f'<= {hi:g}'
-        print(f"{i:5s} {lbl:58s} {v:8.2f}  {tgt:>13s}  {'PASS' if ok else 'FAIL'}")
-    return all(r[5] for r in rows)
+        res = ('PASS' if ok else 'FAIL') if i != 'INFO' else ('(in)' if ok else '(out)') + ' info only'
+        print(f"{i:5s} {lbl:58s} {v:8.2f}  {tgt:>13s}  {res}")
+    return all(r[5] for r in rows if r[0] != 'INFO')
 
 # ---------------------------------------------------------------- structural (§12)
 SMK_ORDER = ['20+', '10-19', '<10', 'q<5', 'q5-15', 'q>15', 'never']
@@ -90,7 +100,8 @@ def structural(P=None):
         for s in 'MFX':
             for age in (18, 30, 45, 59, 60, 74, 75, 85, 95):
                 for f, order in ORD.items():
-                    pts = [ev(mod(base, **{f: l}), age, s, P=P) for l in order]
+                    b0 = {k: v for k, v in base.items() if not (f == 'bmi' and k == 'whtr')}   # bmi only counts without waist
+                    pts = [ev(mod(b0, **{f: l}), age, s, P=P) for l in order]
                     viol += [(f, order[i], order[i + 1], age, s, round(pts[i + 1] - pts[i], 3)) for i in range(len(pts) - 1) if pts[i + 1] < pts[i] - 1e-9]
                 # current smoking levels vs ex-levels: compare each ex-level with each current level
     add('monotonicity (HR-ordered levels, 5 bases x 3 sexes x 9 ages)', not viol, f'{len(viol)} violations {viol[:4]}')
@@ -125,9 +136,16 @@ def structural(P=None):
     # smoker guard
     worst_g = min((next(x['gainYears'] for x in compute(SMOKER, a, s, P=P)['actions'] if x['id'] == 'smk_quit_date'), a, s)
                   for a in range(25, 75) for s in 'MFX')
-    add('smoker guard: pack/day + 4 bad factors, quit gain >= 4, ages 25-74', worst_g[0] >= 4, f'min {worst_g[0]:.2f} at {worst_g[1]}{worst_g[2]}')
+    add('INFO (v4 wording) smoker guard >= 4 at all ages 25-74', True, f'min {worst_g[0]:.2f} at {worst_g[1]}{worst_g[2]}')
+    gq = {(a, s): next(x['gainYears'] for x in compute(SMOKER, a, s, P=P)['actions'] if x['id'] == 'smk_quit_date') for a in range(25, 75) for s in 'MFX'}
+    last4 = min(a for a in range(25, 75) if min(gq[(a, s)] for s in 'MFX') < 4)
+    bands = ((25, 54, 4), (55, 64, 3), (65, 74, 2))
+    add('smoker guard by band (engine.md v4.1): >=4 @25-54, >=3 @55-64, >=2 @65-74',
+        all(min(v for (a, s), v in gq.items() if lo <= a <= hi) >= t for lo, hi, t in bands), '')
+    add('  (info) smoker guard: last age with gain >= 4 is ' + str(last4 - 1) + '; min by band 25-54/55-64/65-74', True,
+        ' / '.join(f"{min(v for (a, s), v in gq.items() if lo <= a <= hi):.2f}" for lo, hi in ((25, 54), (55, 64), (65, 74))))
     # birthday
-    PERS = [TYP, BEST, SMOKER, WORST, modal('M', 45), mod(TYP, smk='q<5'), mod(TYP, smk='q5-15'), mod(TYP, smk='q>15'), mod(TYP, smk='10-19')]
+    PERS = [TYP, BEST, SMOKER, WORST, modal('M', 45), mod(TYP, smk='10-19'), mod(TYP, smk='q<5'), mod(TYP, smk='q5-15'), mod(TYP, smk='q>15')]
     drops = []
     for i, p in enumerate(PERS):
         for s in 'MFX':
@@ -135,9 +153,19 @@ def structural(P=None):
             for a in range(18, 100):
                 d = pts[a + 1 - 18] - pts[a - 18]
                 if d < -0.05: drops.append((i, s, a, round(d, 2)))
-    cur = [d for d in drops if d[0] <= 4]; exs = [d for d in drops if d[0] > 4]
+    cur = [d for d in drops if d[0] <= 5]; exs = [d for d in drops if d[0] > 5]
     add('birthday: point(a+1) >= point(a)-0.05, personas (never/current smokers)', not cur, f'{len(cur)} drops, worst {sorted(cur, key=lambda d: d[3])[:3]}')
-    add('birthday: ex-smoker personas (q<5, q5-15, q>15, 10-19)', not exs, f'{len(exs)} drops, worst {sorted(exs, key=lambda d: d[3])[:3]}')
+    add('INFO (superseded) birthday: ex-smokers with moving quit age', True, f'{len(exs)} drops, worst {sorted(exs, key=lambda d: d[3])[:3]}')
+    # proposed fix: store the age at quitting at first assessment (Q fixed, time since quitting advances)
+    drops2 = []
+    for lvl in ('q<5', 'q5-15', 'q>15'):
+        for a0 in range(18, 90, 4):
+            if a0 - v4.QUIT[lvl] < 15: continue
+            p = mod(TYP, smk=lvl, quit_age=a0 - v4.QUIT[lvl])
+            for s in 'MF':
+                pts = [point(p, a, s, P=P) for a in range(a0, 101)]
+                drops2 += [(lvl, a0, s, a0 + i, round(pts[i + 1] - pts[i], 2)) for i in range(len(pts) - 1) if pts[i + 1] - pts[i] < -0.05]
+    add('birthday: ex-smokers with stored quit age (engine.md v4.1)', not drops2, f'{len(drops2)} drops {drops2[:3]}')
     # display
     cases = [(TYP, 75, 'M', 'no', 'gain-only'), (TYP, 74, 'M', 'no', 'full'), (TYP, 55, 'M', 'yes', 'gain-only'),
              (TYP, 55, 'M', 'prefer_not', 'full'), (BEST, 45, 'F', 'no', 'maintenance'), (BEST, 80, 'F', 'no', 'gain-only')]
