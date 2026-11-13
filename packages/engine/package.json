@@ -1,0 +1,10 @@
+{
+  "name": "@longevity/engine",
+  "version": "0.4.1",
+  "private": true,
+  "description": "Life-expectancy engine per docs/engine.md (v4.1). Pure TypeScript, no runtime deps; runs in the browser.",
+  "type": "module",
+  "main": "src/index.ts",
+  "exports": { ".": "./src/index.ts" },
+  "scripts": { "test": "vitest run" }
+}

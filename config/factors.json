@@ -1,0 +1,309 @@
+{
+ "version": "0.4.1-placeholder",
+ "note": "All values are placeholders pending medical-advisor sign-off (docs/engine.md, spec Appendix B).",
+ "factors": {
+  "act": {
+   "status": "placeholder",
+   "source": "Arem 2015; Moore 2012",
+   "sourceUrl": null,
+   "evidenceGrade": "B",
+   "levels": {
+    "300+": {
+     "hr": 1.0,
+     "ciLow": 1.0,
+     "ciHigh": 1.0
+    },
+    "150-299": {
+     "hr": 1.1,
+     "ciLow": 1.05,
+     "ciHigh": 1.15
+    },
+    "75-149": {
+     "hr": 1.2,
+     "ciLow": 1.12,
+     "ciHigh": 1.28
+    },
+    "1-74": {
+     "hr": 1.3,
+     "ciLow": 1.2,
+     "ciHigh": 1.4
+    },
+    "0": {
+     "hr": 1.55,
+     "ciLow": 1.4,
+     "ciHigh": 1.7
+    }
+   }
+  },
+  "fit": {
+   "status": "placeholder",
+   "source": "Arem 2015; Moore 2012",
+   "sourceUrl": null,
+   "evidenceGrade": "B",
+   "levels": {
+    "easy": {
+     "hr": 1.0,
+     "ciLow": 1.0,
+     "ciHigh": 1.0
+    },
+    "mod": {
+     "hr": 1.2,
+     "ciLow": 1.12,
+     "ciHigh": 1.28
+    },
+    "hard": {
+     "hr": 1.55,
+     "ciLow": 1.4,
+     "ciHigh": 1.7
+    }
+   }
+  },
+  "str": {
+   "status": "placeholder",
+   "source": "Momma 2022",
+   "sourceUrl": null,
+   "evidenceGrade": "C",
+   "levels": {
+    "2+": {
+     "hr": 1.0,
+     "ciLow": 1.0,
+     "ciHigh": 1.0
+    },
+    "1": {
+     "hr": 1.05,
+     "ciLow": 1.0,
+     "ciHigh": 1.1
+    },
+    "0": {
+     "hr": 1.15,
+     "ciLow": 1.08,
+     "ciHigh": 1.2
+    }
+   }
+  },
+  "smk": {
+   "status": "placeholder",
+   "source": "Jha 2013",
+   "sourceUrl": null,
+   "evidenceGrade": "A",
+   "levels": {
+    "never": {
+     "hr": 1.0,
+     "ciLow": 1.0,
+     "ciHigh": 1.0
+    },
+    "q>15": {
+     "hr": 1.1,
+     "ciLow": 1.0,
+     "ciHigh": 1.2
+    },
+    "q5-15": {
+     "hr": 1.3,
+     "ciLow": 1.15,
+     "ciHigh": 1.45
+    },
+    "q<5": {
+     "hr": 1.7,
+     "ciLow": 1.4,
+     "ciHigh": 2.0
+    },
+    "<10": {
+     "hr": 2.0,
+     "ciLow": 1.7,
+     "ciHigh": 2.3
+    },
+    "10-19": {
+     "hr": 2.5,
+     "ciLow": 2.2,
+     "ciHigh": 2.8
+    },
+    "20+": {
+     "hr": 3.0,
+     "ciLow": 2.6,
+     "ciHigh": 3.4
+    }
+   }
+  },
+  "diet": {
+   "status": "placeholder",
+   "source": "Shan 2023",
+   "sourceUrl": null,
+   "evidenceGrade": "C",
+   "levels": {
+    "high": {
+     "hr": 1.0,
+     "ciLow": 1.0,
+     "ciHigh": 1.0
+    },
+    "mid": {
+     "hr": 1.1,
+     "ciLow": 1.05,
+     "ciHigh": 1.15
+    },
+    "low": {
+     "hr": 1.22,
+     "ciLow": 1.12,
+     "ciHigh": 1.35
+    }
+   }
+  },
+  "whtr": {
+   "status": "placeholder",
+   "source": "Global BMI Mortality Collaboration 2016",
+   "sourceUrl": null,
+   "evidenceGrade": "B",
+   "levels": {
+    "<0.5": {
+     "hr": 1.0,
+     "ciLow": 1.0,
+     "ciHigh": 1.0
+    },
+    "0.5-0.6": {
+     "hr": 1.1,
+     "ciLow": 1.05,
+     "ciHigh": 1.2
+    },
+    ">0.6": {
+     "hr": 1.45,
+     "ciLow": 1.3,
+     "ciHigh": 1.55
+    }
+   }
+  },
+  "bmi": {
+   "status": "placeholder",
+   "source": "Global BMI Mortality Collaboration 2016",
+   "sourceUrl": null,
+   "evidenceGrade": "B",
+   "levels": {
+    "18.5-25": {
+     "hr": 1.0,
+     "ciLow": 1.0,
+     "ciHigh": 1.0
+    },
+    "25-30": {
+     "hr": 1.1,
+     "ciLow": 1.1,
+     "ciHigh": 1.1
+    },
+    "30-35": {
+     "hr": 1.45,
+     "ciLow": 1.45,
+     "ciHigh": 1.45
+    },
+    "35+": {
+     "hr": 2.0,
+     "ciLow": 2.0,
+     "ciHigh": 2.0
+    },
+    "<18.5": {
+     "hr": 1.3,
+     "ciLow": 1.3,
+     "ciHigh": 1.3
+    }
+   }
+  },
+  "sleep": {
+   "status": "placeholder",
+   "source": "Yin 2017",
+   "sourceUrl": null,
+   "evidenceGrade": "C",
+   "levels": {
+    "7-8": {
+     "hr": 1.0,
+     "ciLow": 1.0,
+     "ciHigh": 1.0
+    },
+    "6": {
+     "hr": 1.06,
+     "ciLow": 1.06,
+     "ciHigh": 1.06
+    },
+    "<6": {
+     "hr": 1.13,
+     "ciLow": 1.13,
+     "ciHigh": 1.13
+    },
+    "9+": {
+     "hr": 1.1,
+     "ciLow": 1.1,
+     "ciHigh": 1.1
+    }
+   }
+  },
+  "irreg": {
+   "status": "placeholder",
+   "source": "Windred 2024",
+   "sourceUrl": null,
+   "evidenceGrade": "C",
+   "levels": {
+    "no": {
+     "hr": 1.0,
+     "ciLow": 1.0,
+     "ciHigh": 1.0
+    },
+    "yes": {
+     "hr": 1.05,
+     "ciLow": 1.0,
+     "ciHigh": 1.1
+    }
+   }
+  },
+  "alc": {
+   "status": "placeholder",
+   "source": "Wood 2018",
+   "sourceUrl": null,
+   "evidenceGrade": "B",
+   "levels": {
+    "0-7": {
+     "hr": 1.0,
+     "ciLow": 1.0,
+     "ciHigh": 1.0
+    },
+    "8-14": {
+     "hr": 1.05,
+     "ciLow": 1.05,
+     "ciHigh": 1.05
+    },
+    "15-24": {
+     "hr": 1.17,
+     "ciLow": 1.17,
+     "ciHigh": 1.17
+    },
+    "25-34": {
+     "hr": 1.4,
+     "ciLow": 1.4,
+     "ciHigh": 1.4
+    },
+    "35+": {
+     "hr": 1.9,
+     "ciLow": 1.9,
+     "ciHigh": 1.9
+    }
+   }
+  },
+  "soc": {
+   "status": "placeholder",
+   "source": "Holt-Lunstad 2010; Wang 2023",
+   "sourceUrl": null,
+   "evidenceGrade": "C",
+   "levels": {
+    "conn": {
+     "hr": 1.0,
+     "ciLow": 1.0,
+     "ciHigh": 1.0
+    },
+    "mid": {
+     "hr": 1.1,
+     "ciLow": 1.03,
+     "ciHigh": 1.15
+    },
+    "iso": {
+     "hr": 1.25,
+     "ciLow": 1.14,
+     "ciHigh": 1.32
+    }
+   }
+  }
+ }
+}
