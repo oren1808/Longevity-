@@ -12,6 +12,7 @@ The TypeScript engine must match `v4.py` on the persona table (±0.01) – see `
   - per-single-age `C[sex][age]` (18–100) by Monte Carlo (fixed seed, N = 20,000 per sex, common random numbers across ages, Illinois root-finding), isotonic non-increasing smoothing, cached in `v4_C.json` (keyed by a hash of parameters + HRs + prevalence + N + seed; delete the file to force a rebuild, ~13 s per parameter set);
   - quit tiers with age-at-quit `rho(Q)`, attenuation on the capped cluster, range formula, actions (§6), `hoursPerDay`, `credited_gain`, `display`, `what_if`.
 - **`v4_tests.py`** – anchors A1–A9 (§11), structural tests (§12), half-width check, persona table. Prints a PASS/FAIL table.
+- **`export_for_ts.py`** – writes `/config/*.json`, `/data/life-tables/IL-placeholder-gm.json` and `packages/engine/test/fixtures/prototype.json` for the TypeScript engine. Re-run after any change here.
 - `v3.py`, `v3_*.py`, `v3_C.json` – previous version (spec v3), kept for comparison.
 
 ## Run
